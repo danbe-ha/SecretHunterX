@@ -230,13 +230,9 @@ SecretHunter X is designed with a local-first approach:
 
 ---
 
-#  Authors
-
-## Ali Benrioui
-Lead Developer & Security Researcher
-
-## Rajaa Eddanir
-Co-Developer & Security Analyst
+## 👥 Authors
+* **Ali Benrioui** - Cybersecurity Student
+* **Rajaa Eddanir** - Cybersecurity Student
 
 ---
 
