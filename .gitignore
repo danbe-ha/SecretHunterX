@@ -1,0 +1,19 @@
+# Environnement virtuel
+venv/
+.env
+
+# Fichiers compilés Python
+**/__pycache__/
+*.pyc
+
+# Fichiers temporaires de scan
+.tmp/
+uploads/
+
+# Rapports générés (optionnel, selon si tu veux les partager ou non)
+output/*.pdf
+output/*.json
+
+# Configuration IDE
+.vscode/
+.idea/

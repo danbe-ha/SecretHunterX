@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SecretHunter X | APK Security Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=Orbitron:wght@500;700;900&display=swap');
+        
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#050816; font-family:'Inter',sans-serif; color:white; overflow-x:hidden; }
+
+        /* BACKGROUND EFFECTS */
+        .cyber-grid { position:fixed; inset:0; background: linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px); background-size:40px 40px; z-index:-2; }
+        .glow { position:fixed; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle, rgba(0,229,255,0.12), transparent 70%); filter:blur(90px); z-index:-1; top:-100px; left:-100px; }
+        .glow2 { position:fixed; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle, rgba(139,92,246,0.15), transparent 70%); filter:blur(90px); z-index:-1; bottom:-150px; right:-100px; }
+
+        /* UI ELEMENTS */
+        .glass { background:rgba(15,23,42,0.72); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.05); box-shadow: 0 0 25px rgba(0,229,255,0.04), inset 0 0 15px rgba(255,255,255,0.02); }
+        .logo { font-family:'Orbitron',sans-serif; letter-spacing:2px; }
+        .logo span { color:#00e5ff; text-shadow:0 0 15px #00e5ff; }
+        
+        /* STATUS DOT */
+        .status-dot { width:10px; height:10px; border-radius:50%; background:#00ff88; box-shadow:0 0 15px #00ff88; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.6); opacity:0.4; } }
+
+        /* DROP ZONE */
+        .drop-zone { transition:0.4s ease; border: 1px dashed rgba(0, 229, 255, 0.2); }
+        .drop-zone:hover { transform:translateY(-4px); border-color:rgba(0,229,255,0.4); box-shadow:0 0 40px rgba(0,229,255,0.12); }
+        
+        .upload-circle { width:120px; height:120px; border-radius:50%; background:rgba(0,229,255,0.08); display:flex; align-items:center; justify-content:center; margin:auto; position:relative; }
+        .upload-circle::before { content:''; position:absolute; inset:-10px; border-radius:50%; border:2px dashed rgba(0,229,255,0.2); animation:rotate 10s linear infinite; }
+        @keyframes rotate { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+
+        /* SCANNER ANIMATION */
+        .scan-box { position:relative; overflow:hidden; }
+        .scan-line { position:absolute; width:100%; height:4px; background:linear-gradient(90deg, transparent, #00e5ff, transparent); top:0; animation:scanner 2s infinite; box-shadow:0 0 20px #00e5ff; }
+        @keyframes scanner { from { top:0%; } to { top:100%; } }
+
+        /* FINDINGS */
+        .finding-card { position:relative; overflow:hidden; transition:0.3s ease; border-left: 4px solid #00e5ff; }
+        .finding-card:hover { transform:translateX(6px); box-shadow:0 0 35px rgba(0,229,255,0.1); }
+        .finding-card.critical { border-left-color: #ff3b6b; }
+        
+        .cyber-btn { background:linear-gradient(135deg,#00e5ff,#7c3aed); transition:0.3s ease; box-shadow:0 0 25px rgba(0,229,255,0.18); }
+        .cyber-btn:hover { transform:translateY(-3px); box-shadow:0 0 40px rgba(0,229,255,0.35); }
+        
+        .tag { background:rgba(0,229,255,0.08); color:#00e5ff; padding:8px 14px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid rgba(0,229,255,0.1); }
+        .terminal { background:#020617; border:1px solid rgba(0,255,255,0.08); font-family:monospace; color:#00ff88; }
+        .neon { text-shadow:0 0 10px rgba(0,229,255,0.6); }
+    </style>
+</head>
+
+<body>
+    <div class="cyber-grid"></div>
+    <div class="glow"></div>
+    <div class="glow2"></div>
+
+    <div class="max-w-5xl mx-auto px-6 py-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16">
+            <div class="flex items-center gap-5">
+                <div class="w-20 h-20 rounded-3xl glass flex items-center justify-center">
+                    <i class="fa-solid fa-user-secret text-4xl text-cyan-400 neon"></i>
+                </div>
+                <div>
+                    <h1 class="logo text-4xl font-black">SECRET<span>HUNTER X</span></h1>
+                    <p class="text-slate-400 text-xs tracking-[5px] uppercase mt-2">Android Static Security Scanner</p>
+                </div>
+            </div>
+            <div class="glass px-6 py-4 rounded-2xl flex items-center gap-3">
+                <div class="status-dot"></div>
+                <div>
+                    <span class="text-sm font-bold text-slate-300">Scan Engine Online</span>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest">AI Phi-3 v1.0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="drop-zone" class="drop-zone glass rounded-[32px] p-14 text-center cursor-pointer">
+            <div class="upload-circle mb-8">
+                <i class="fa-solid fa-cloud-arrow-up text-5xl text-cyan-400"></i>
+            </div>
+            <h2 class="text-3xl font-black mb-4 neon">Analyse APK Sécurisée</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto leading-relaxed text-[15px]">
+                Déposez votre fichier APK pour exécuter une analyse statique avancée. 
+                Détection automatique de secrets, configurations sensibles et conformité MASVS.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-3">
+                <div class="tag"><i class="fa-solid fa-shield-halved mr-2"></i>Static Analysis</div>
+                <div class="tag"><i class="fa-solid fa-key mr-2"></i>Secrets Detection</div>
+                <div class="tag"><i class="fa-solid fa-code mr-2"></i>Reverse Engineering</div>
+            </div>
+            <input type="file" id="file-input" class="hidden" accept=".apk" />
+        </div>
+
+        <div id="loader" class="hidden glass rounded-[32px] p-10 mt-10 scan-box">
+            <div class="scan-line"></div>
+            <div class="flex items-center gap-5 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center">
+                    <i class="fa-solid fa-brain text-3xl text-cyan-400 animate-pulse"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black neon">Analyse en cours...</h3>
+                    <p class="text-slate-400 text-sm mt-1">L'IA déchiffre les patterns de sécurité...</p>
+                </div>
+            </div>
+            <div class="terminal rounded-2xl p-6 text-sm space-y-2 opacity-80">
+                <p>> Extraction des ressources APK...</p>
+                <p>> Décompilation des sources Java/Kotlin...</p>
+                <p>> Scanning des secrets et API Keys...</p>
+                <p>> Audit cognitive par Phi-3...</p>
+                <p>> Compilation du rapport final...</p>
+            </div>
+        </div>
+
+        <div id="results" class="hidden mt-10">
+            <div class="glass rounded-[32px] p-8 mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <p class="text-cyan-400 text-xs tracking-[4px] uppercase font-bold mb-2">Security Audit Report</p>
+                    <h3 class="text-3xl font-black neon">Résultats de l'analyse</h3>
+                </div>
+                <a id="btn-pdf" href="#" class="cyber-btn px-8 py-4 rounded-2xl font-bold text-sm text-center">
+                    <i class="fa-solid fa-file-pdf mr-2"></i>Télécharger le PDF
+                </a>
+            </div>
+            <div id="findings-list" class="space-y-5"></div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const loader = document.getElementById('loader');
+        const results = document.getElementById('results');
+        const findingsList = document.getElementById('findings-list');
+        const btnPdf = document.getElementById('btn-pdf');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => {
+            if(e.target.files[0]) handleUpload(e.target.files[0]);
+        };
+
+        async function handleUpload(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            dropZone.classList.add('hidden');
+            loader.classList.remove('hidden');
+            results.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Erreur Serveur');
+
+                const data = await response.json();
+                
+                loader.classList.add('hidden');
+                results.classList.remove('hidden');
+                btnPdf.href = data.pdf_report_url;
+
+                if (data.findings.length === 0) {
+                    findingsList.innerHTML = `
+                        <div class="glass rounded-[32px] p-16 text-center border-green-500/20">
+                            <i class="fa-solid fa-shield-check text-6xl text-green-400 mb-6"></i>
+                            <h3 class="text-3xl font-black mb-3">Audit Conforme</h3>
+                            <p class="text-slate-400">Aucune menace critique détectée dans ce package.</p>
+                        </div>`;
+                } else {
+                    findingsList.innerHTML = data.findings.map(f => `
+                        <div class="finding-card glass rounded-[28px] p-8 ${f.severity === 'CRITICAL' || f.severity === 'HIGH' ? 'critical' : ''}">
+                            <div class="flex flex-wrap justify-between items-center gap-4 mb-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="tag">${f.masvs || 'MASVS'}</div>
+                                    <div class="text-xs uppercase tracking-[3px] ${f.severity === 'CRITICAL' || f.severity === 'HIGH' ? 'text-red-400' : 'text-cyan-400'}">
+                                        ${f.severity || 'LOW'} Risk
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-black mb-4 uppercase tracking-tight">
+                                ${f.pattern_name ? f.pattern_name.replace(/_/g,' ') : 'Vulnerability'}
+                            </h4>
+                            <p class="text-slate-400 leading-relaxed italic">"${f.explanation || 'Analyse indisponible.'}"</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Le scan a échoué. Vérifiez la console serveur.');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
